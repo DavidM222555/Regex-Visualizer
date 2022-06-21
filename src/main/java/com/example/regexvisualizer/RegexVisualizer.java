@@ -1,6 +1,7 @@
 package com.example.regexvisualizer;
 
-import com.example.regexvisualizer.regexutils.State;
+import com.example.regexvisualizer.regexutils.NFA;
+import com.example.regexvisualizer.regexutils.ParseHelper;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -13,10 +14,14 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+
 public class RegexVisualizer extends Application {
+
     public static void main(String [] args) {
         launch(args);
     }
+
+    public String regexString = "";
 
     @Override
     public void start(Stage primaryStage) {
@@ -49,18 +54,15 @@ public class RegexVisualizer extends Application {
         grid.add(userText, 1, 2, 2, 2);
 
         var submitForAnalysis = new Button("Regex!");
+
+        submitForAnalysis.setOnAction(actionEvent -> {
+            regexString = String.valueOf(regex.getText());
+            userText.setText(regexString);
+        });
+
         grid.add(submitForAnalysis, 1, 5);
 
-        State state1 = new State(1, true);
-        State state2 = new State(2, true);
-        State state3 = new State(3, true);
 
-        state1.addTransition('a', state2);
-        state1.addTransition('b', state3);
-        state1.addTransition('c', state1);
-        state1.addTransition('b', state2);
-
-        state1.printTransitions();
 
         primaryStage.show();
     }
