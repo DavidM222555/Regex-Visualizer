@@ -220,6 +220,12 @@ public class NFA {
         return returnList;
     }
 
+    // Resets the current states of the NFA
+    public void reset() {
+        this.currentStates.clear();
+
+        this.currentStates.add(this.startState);
+    }
 
     public void transition(char charRead) {
         ArrayList<State> newCurrentStates = new ArrayList<>();
@@ -259,7 +265,9 @@ public class NFA {
             it.next();
         }
 
-        return inAcceptState();
-    }
+        boolean result = inAcceptState();
+        this.reset(); // Reset current states
 
+        return result;
+    }
 }

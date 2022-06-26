@@ -5,7 +5,7 @@ import java.util.*;
 public final class ParseHelper {
 
     // @purpose: Makes concatanation explicit
-    // @example: stringToConvert = "abc" -> "a@b@c"
+    // @example: stringToConvert = "abc" -> "a.b.c"
     public static String addConcatOperators(String stringToConvert) {
         StringBuilder returnString = new StringBuilder();
 
@@ -112,8 +112,6 @@ public final class ParseHelper {
         regex = addConcatOperators(regex);
         regex = convertToPostfix(regex);
 
-        System.out.println("Regex: " + regex);
-
         Stack<NFA> nfaStack = new Stack<>();
 
         for(int i = 0; i < regex.length(); i++) {
@@ -148,4 +146,29 @@ public final class ParseHelper {
 
         return nfaStack.pop();
     }
+
+    public static Set<Integer> getWordsThatMatchRegex(String text, String regex) {
+        List<Integer> highlightIndices = new ArrayList<Integer>();
+        NFA nfaForRegex = parseRegex(regex);
+
+        Set<Integer> highlightedIndices = new HashSet<>();
+
+        for(int startIndex = 0; startIndex <= text.length(); startIndex++) {
+            for(int endIndex = startIndex; endIndex <= text.length(); endIndex++) {
+                String substring = text.substring(startIndex, endIndex);
+
+                // Does our regex match the string?
+                if(nfaForRegex.readString(substring)) {
+
+                    for(int i = startIndex; i < endIndex; i++) {
+                        highlightedIndices.add(i);
+                    }
+                }
+            }
+        }
+
+        return highlightedIndices;
+    }
+
+
 }

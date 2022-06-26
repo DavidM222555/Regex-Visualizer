@@ -5,6 +5,7 @@ module com.example.regexvisualizer {
     requires org.controlsfx.controls;
     requires com.dlsc.formsfx;
     requires org.kordamp.bootstrapfx.core;
+    requires richtextfx.fat;
 
     opens com.example.regexvisualizer to javafx.fxml;
     exports com.example.regexvisualizer;
