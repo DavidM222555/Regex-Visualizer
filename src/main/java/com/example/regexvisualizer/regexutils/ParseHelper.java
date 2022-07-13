@@ -4,8 +4,9 @@ import java.util.*;
 
 public final class ParseHelper {
 
-    // @purpose: Makes concatanation explicit
-    // @example: stringToConvert = "abc" -> "a.b.c"
+    /**
+     * @return Make concatenation explicit in stringToConvert and then return it
+     */
     public static String addConcatOperators(String stringToConvert) {
         StringBuilder returnString = new StringBuilder();
 
@@ -36,15 +37,28 @@ public final class ParseHelper {
         return returnString.toString();
     }
 
-    // Compares two operators and determines if op1 has higher precedence than op2
+    /**
+     * @param precedence Hashmap of operators to their precedence value
+     * @return Returns whether op1 has higher or equal precedence to op2
+     */
     public static boolean higherOrEqualPrec(char op1, char op2, HashMap<Character, Integer> precedence) {
         return precedence.get(op1) >= precedence.get(op2);
     }
 
+    /**
+     * @return Returns whether or not charToTest is a valid operator according to our regex specification
+     */
     public static boolean isOperator(char charToTest) {
         return charToTest == '*' || charToTest == '+' || charToTest == '.';
     }
 
+
+    /**
+     * Converts a string in infix notation to a string in postfix notation using the Shunting-Yard algorithm.
+     * This is primarily done because
+     * @param stringToConvert A string in infix notation
+     * @return A string in postfix notation representing stringToConvert
+     */
     public static String convertToPostfix(String stringToConvert) {
         LinkedList<Character> outputQueue = new LinkedList<>();
         Stack<Character> operatorStack = new Stack<>();
@@ -92,7 +106,6 @@ public final class ParseHelper {
                     }
                 }
 
-
                 if(operatorStack.isEmpty()) {
                     operatorStack.push(currentChar);
                 }
@@ -108,6 +121,11 @@ public final class ParseHelper {
     }
 
 
+    /**
+     * Converts a regex to a complete NFA that can be used to parse a text.
+     * @param regex String for our regex
+     * @return The complete NFA for recognizing strings in our regex
+     */
     public static NFA parseRegex(String regex) {
         regex = addConcatOperators(regex);
         regex = convertToPostfix(regex);
@@ -147,8 +165,12 @@ public final class ParseHelper {
         return nfaStack.pop();
     }
 
+    /**
+     * Find all indices in text where regex matches.
+     * @return Set of indices that correspond to places in text where regex matched.
+     */
     public static Set<Integer> getWordsThatMatchRegex(String text, String regex) {
-        List<Integer> highlightIndices = new ArrayList<Integer>();
+        List<Integer> highlightIndices = new ArrayList<>();
         NFA nfaForRegex = parseRegex(regex);
 
         Set<Integer> highlightedIndices = new HashSet<>();
@@ -159,7 +181,6 @@ public final class ParseHelper {
 
                 // Does our regex match the string?
                 if(nfaForRegex.readString(substring)) {
-
                     for(int i = startIndex; i < endIndex; i++) {
                         highlightedIndices.add(i);
                     }
@@ -169,6 +190,4 @@ public final class ParseHelper {
 
         return highlightedIndices;
     }
-
-
 }

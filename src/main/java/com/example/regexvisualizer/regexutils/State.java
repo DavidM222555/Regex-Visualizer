@@ -11,13 +11,9 @@ public class State {
     // easier to work with and probably more efficient.
     HashMap<Character, ArrayList<State>> transitions;
     ArrayList<State> epsilonTransitions; // Stores all the outgoing states from here along epsilon transitions
-    public int id;
-    public boolean isAccept;
 
     public State(int id, boolean isAccept) {
         this.transitions = new HashMap<>();
-        this.id = id;
-        this.isAccept = isAccept;
         this.epsilonTransitions = new ArrayList<>();
     }
 

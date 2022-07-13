@@ -21,6 +21,10 @@ public class NFA {
     }
 
 
+    /**
+     * @return Returns an NFA that consists solely of a single start state and accept state and transChar as the transition
+     * between them.
+     */
     public static NFA symbolNFA(char transChar) {
         NFA symbolNFA = new NFA();
 
@@ -40,8 +44,10 @@ public class NFA {
         return symbolNFA;
     }
 
-    // This unions two NFAs together, giving them
-    // a joined start state and a new accepting state
+
+    /**
+     * @return Returns the result of unioning nfa1 and nfa2. Effectively combines the possible accept states of each.
+     */
     public static NFA unionNFA(NFA nfa1, NFA nfa2) {
         NFA unionedNFA = new NFA();
 
@@ -80,6 +86,11 @@ public class NFA {
         return unionedNFA;
     }
 
+
+    /**
+     * @return Returns the result of concatenating nfa1 and nfa2. Effectively connecting the end states of nfa1 to the
+     * start state of nfa2
+     */
     public static NFA concatenatedNFA(NFA nfa1, NFA nfa2) {
         NFA concatNFA = new NFA();
 
@@ -108,6 +119,11 @@ public class NFA {
         return concatNFA;
     }
 
+
+    /**
+     * @param nfa Current NFA that we will take the Kleene star of
+     * @return The resulting NFA after the Kleene star operation
+     */
     public static NFA kleeneNFA(NFA nfa) {
         NFA klNFA = new NFA();
 
@@ -141,13 +157,6 @@ public class NFA {
         return klNFA;
     }
 
-    public State getStartState() {
-       return this.startState;
-    }
-
-    public void addState(State stateToAdd) {
-        listOfStates.add(stateToAdd);
-    }
 
     public boolean inAcceptState() {
         for(var state : currentStates) {
@@ -159,27 +168,35 @@ public class NFA {
         return false;
     }
 
-    public void addCurrentState(State stateToAdd) {
-        this.currentStates.add(stateToAdd);
-    }
 
+    public State getStartState() {
+        return this.startState;
+    }
     public ArrayList<State> getAcceptStates() {
         return this.acceptStates;
     }
-
     public ArrayList<State> getAllStates() {
         return this.listOfStates;
     }
 
+    public void addState(State stateToAdd) {
+        listOfStates.add(stateToAdd);
+    }
+    public void addCurrentState(State stateToAdd) {
+        this.currentStates.add(stateToAdd);
+    }
     public void addAcceptState(State acceptState) {
         this.acceptStates.add(acceptState);
     }
-
     public void addStartState(State startState) {
         this.startState = startState;
     }
 
-    // Gets all states reachable along epsilon transitions from a given state
+
+    /**
+     * @param state State used as the basis for getting transitions to other states
+     * @return A list of states reachable along epsilon transitions from state
+     */
     public ArrayList<State> getStatesReachableAlongEpsilonTransitions(State state) {
         ArrayList<State> returnList = state.epsilonTransitions;
 
@@ -196,6 +213,8 @@ public class NFA {
                 }
             }
 
+            // We didn't increase the size of the return list and thus didn't add any new states
+            // So we can return
             if(returnList.size() == prevLength) {
                 break;
             }
@@ -204,6 +223,11 @@ public class NFA {
         return returnList;
     }
 
+
+    /**
+     * @param listOfStatesToGetTransFor All states to get transitions for
+     * @return A list of states to get transitions for.
+     */
     public ArrayList<State> allStatesFromEpsilonTransitions(ArrayList<State> listOfStatesToGetTransFor) {
         ArrayList<State> returnList = new ArrayList<>(listOfStatesToGetTransFor);
 
@@ -220,13 +244,20 @@ public class NFA {
         return returnList;
     }
 
-    // Resets the current states of the NFA
+
+    /**
+     * Resets the current states of the NFA and adds the start state.
+     */
     public void reset() {
         this.currentStates.clear();
 
         this.currentStates.add(this.startState);
     }
 
+
+    /**
+     * @param charRead Character to get transition states for
+     */
     public void transition(char charRead) {
         ArrayList<State> newCurrentStates = new ArrayList<>();
 
@@ -239,7 +270,6 @@ public class NFA {
         currentStates.clear();
         currentStates.addAll(setOfStates);
 
-
         // Now read a single character and go to all states reachable from that transition character
         for(State state : currentStates) {
             var transitionStates = state.getTransitionStates(charRead);
@@ -247,6 +277,8 @@ public class NFA {
             newCurrentStates.addAll(transitionStates);
         }
 
+        // Get transition states after we have made all character transitions -- this is the final set of transitions
+        // necessary
         currentStates = newCurrentStates;
         var statesReachableAlongEpsilonAfterTransition = allStatesFromEpsilonTransitions(currentStates);
         currentStates.addAll(statesReachableAlongEpsilonAfterTransition);
@@ -254,9 +286,13 @@ public class NFA {
         Set<State> setOfStatesAfter = new HashSet<>(currentStates);
         currentStates.clear();
         currentStates.addAll(setOfStatesAfter);
-
     }
 
+
+    /**
+     * @param input Input string for the program
+     * @return Boolean value determining whether or not the NFA is in an accept state after reading input
+     */
     public boolean readString(String input) {
         CharacterIterator it = new StringCharacterIterator(input);
 
@@ -270,4 +306,5 @@ public class NFA {
 
         return result;
     }
+
 }
