@@ -1,0 +1,6 @@
+.red-text {
+    -fx-font-color: red;
+}
+.text-with-caret {
+    -fx-font-cursor: hand;
+}
